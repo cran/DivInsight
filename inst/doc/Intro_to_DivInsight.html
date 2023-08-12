@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Introduction to DivInsight</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to DivInsight</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DivInsight)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Colombia&quot;</span>)</span></code></pre></div>
+<p>This is an introduction to the ‘DivInsight’ package.</p>
+<p>We use ‘DivInsight’ to repurpose historical occurrence taxon data for
+further analysis.</p>
+<p>Included in the package is the Colombia dataset, which contains
+occurrence data for the taxon ‘Formicidae’ at the Family level from 2000
+to 2023. This data was queried from the Global Biodiversity Information
+Facility (GBIF) database using the <code>rgbif</code> package.</p>
+<p>Each row of the occurrence dataframe has data for one observed
+individual. The dataset has many variables but the most important ones
+for the functions in this package pertain to taxa names, coordinate
+location, and dates of the observations.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Colombia[<span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">31</span><span class="sc">:</span><span class="dv">32</span>, <span class="dv">45</span>)], <span class="dv">10</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 10 × 6</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    scientificName        decimalLatitude decimalLongitude family genus eventDate</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;                           &lt;dbl&gt;            &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;    </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 Hylomyrma transversa…          2.18              -71.2 Formi… Hylo… 2000-01-…</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 Carebara Westwood, 1…          4.53              -75.6 Formi… Care… 2000-01-…</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 Dolichoderus bispino…          2.18              -73.8 Formi… Doli… 2000-01-…</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 Cephalotes marginatu…          0.0667            -72.4 Formi… Ceph… 2000-01-…</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 Pheidole Westwood, 1…          4.36              -75.7 Formi… Phei… 2000-01-…</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 Pheidole Westwood, 1…          4.36              -75.7 Formi… Phei… 2000-01-…</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 Pheidole Westwood, 1…          4.36              -75.7 Formi… Phei… 2000-01-…</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 Pheidole Westwood, 1…          4.36              -75.7 Formi… Phei… 2000-01-…</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 Pheidole Westwood, 1…          4.36              -75.7 Formi… Phei… 2000-01-…</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 Pheidole Westwood, 1…          0.248             -72.9 Formi… Phei… 2000-01-…</span></span></code></pre></div>
+<p>We can subset the Colombia dataset then perform the most important
+function in the package <code>clusterise_sites()</code> to cluster data
+by date and produce centered coordinates for each cluster.</p>
+<p>These clusters of data can be considered sites.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># subset the dataframe by province name </span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Colombia_Meta <span class="ot">&lt;-</span> <span class="fu">subset</span>(Colombia, stateProvince <span class="sc">==</span> <span class="st">&quot;Meta&quot;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># cluster occurrence data by date and generate centred coordinates for each site</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>clusterised_Meta <span class="ot">&lt;-</span> <span class="fu">clusterise_sites</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataframe =</span> Colombia_Meta,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster_min_length =</span> <span class="dv">30</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>Once the data has been ‘clusterised’ a dataframe, where each row
+pertains to a site, can be produced by using
+<code>generate_stats()</code>. This information includes date of
+observations, centred coordinates, and diversity indices. These indices
+include Species Richness (S), Shannon Diversity (H), Simpson Diversity
+(D), Inverse Simpson (Dinv), Margalef’s Diversity (d), and Pielou’s
+Evenness (J).</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># generate stats </span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>stats_Meta <span class="ot">&lt;-</span> <span class="fu">generate_stats</span>(clusterised_Meta)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># view the stats table</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(stats_Meta)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    longitude latitude site_group       date year month day  country</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  -73.46702 4.058576          1 2000-10-01 2000    10   1 Colombia</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  -73.46702 4.058576          1 2000-10-06 2000    10   6 Colombia</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  -71.71407 4.322192          1 2012-05-01 2012     5   1 Colombia</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  -72.96847 4.295741          1 2013-02-10 2013     2  10 Colombia</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  -72.96847 4.295741          1 2013-02-11 2013     2  11 Colombia</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6  -72.96847 4.295741          1 2013-02-12 2013     2  12 Colombia</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7  -72.96847 4.295741          1 2013-02-13 2013     2  13 Colombia</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8  -72.97906 4.287842          1 2013-02-15 2013     2  15 Colombia</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9  -72.97054 4.288258          1 2013-02-16 2013     2  16 Colombia</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 -72.97906 4.287842          1 2013-02-17 2013     2  17 Colombia</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 -72.97466 4.285456          1 2013-02-18 2013     2  18 Colombia</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 -72.96518 4.273713          1 2013-02-21 2013     2  21 Colombia</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13 -72.96660 4.272737          1 2013-02-22 2013     2  22 Colombia</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14 -72.96733 4.273370          1 2013-02-23 2013     2  23 Colombia</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15 -72.97047 4.275363          1 2013-02-24 2013     2  24 Colombia</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 16 -72.96566 4.458016          1 2013-03-03 2013     3   3 Colombia</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 17 -72.96566 4.458016          1 2013-03-04 2013     3   4 Colombia</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 18 -72.96566 4.458016          1 2013-03-05 2013     3   5 Colombia</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 19 -72.96566 4.458016          1 2013-03-06 2013     3   6 Colombia</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20 -72.96038 4.401621          1 2013-03-08 2013     3   8 Colombia</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21 -72.96413 4.403583          1 2013-03-09 2013     3   9 Colombia</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 22 -72.96038 4.401621          1 2013-03-10 2013     3  10 Colombia</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 23 -72.81086 4.357411          1 2013-03-11 2013     3  11 Colombia</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 24 -72.97800 4.445970          1 2013-03-13 2013     3  13 Colombia</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 25 -72.97800 4.445970          1 2013-03-14 2013     3  14 Colombia</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 26 -72.97800 4.445970          1 2013-03-15 2013     3  15 Colombia</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 27 -72.97800 4.445970          1 2013-03-16 2013     3  16 Colombia</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 28 -71.81433 4.530222          1 2015-09-16 2015     9  16 Colombia</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 29 -72.36711 4.377956          1 2015-10-13 2015    10  13 Colombia</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30 -73.06123 4.134214          1 2015-11-19 2015    11  19 Colombia</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 31 -73.06123 4.134213          1 2016-02-15 2016     2  15 Colombia</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 32 -73.20257 4.042752          1 2016-02-20 2016     2  20 Colombia</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 33 -72.91989 4.225658          1 2016-02-24 2016     2  24 Colombia</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 34 -73.58081 4.077551          1 2016-03-21 2016     3  21 Colombia</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 35 -73.61314 4.094075          1 2016-04-12 2016     4  12 Colombia</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 36 -73.47471 4.073413          1 2016-05-24 2016     5  24 Colombia</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 37 -73.47267 4.073333          1 2016-06-13 2016     6  13 Colombia</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38 -73.47267 4.073333          1 2016-08-03 2016     8   3 Colombia</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39 -72.02722 4.171914          1 2017-05-22 2017     5  22 Colombia</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40 -73.40181 3.531730          1 2017-08-28 2017     8  28 Colombia</span></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 41 -73.40181 3.531730          1 2019-04-08 2019     4   8 Colombia</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 42 -71.43081 3.814218          1 2021-06-26 2021     6  26 Colombia</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 43 -71.39631 3.821191          1 2021-06-27 2021     6  27 Colombia</span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 44 -71.52242 3.857269          1 2021-06-29 2021     6  29 Colombia</span></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 45 -73.58722 3.884813          1 2021-07-07 2021     7   7 Colombia</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 46 -73.36824 4.083131          1 2022-11-09 2022    11   9 Colombia</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 47 -73.38409 4.080567          1 2022-11-11 2022    11  11 Colombia</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 48 -73.37865 4.091503          1 2022-11-14 2022    11  14 Colombia</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    stateProvince  kingdom     phylum   class  S         H          D      Dinv</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1           Meta Animalia Arthropoda Insecta  6 1.4554681 0.72163265  3.592375</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2           Meta Animalia Arthropoda Insecta 14 1.9166250 0.79163828  4.799346</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3           Meta Animalia Arthropoda Insecta 39 3.2055799 0.93252811 14.820988</span></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4           Meta Animalia Arthropoda Insecta 39 3.0140953 0.92458580 13.260102</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5           Meta Animalia Arthropoda Insecta 38 3.0036330 0.92388605 13.138196</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6           Meta Animalia Arthropoda Insecta 36 2.9239033 0.91554923 11.841218</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7           Meta Animalia Arthropoda Insecta 29 2.6783249 0.89443445  9.472788</span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8           Meta Animalia Arthropoda Insecta 46 2.8900896 0.89944368  9.944676</span></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9           Meta Animalia Arthropoda Insecta 38 2.8284995 0.90380918 10.396003</span></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10          Meta Animalia Arthropoda Insecta 36 2.8605812 0.90954877 11.055682</span></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11          Meta Animalia Arthropoda Insecta 40 2.9372944 0.90670360 10.718527</span></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12          Meta Animalia Arthropoda Insecta 41 3.0222843 0.91674944 12.011932</span></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13          Meta Animalia Arthropoda Insecta 37 3.0079504 0.92719723 13.735741</span></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14          Meta Animalia Arthropoda Insecta 28 2.8212660 0.91321303 11.522468</span></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15          Meta Animalia Arthropoda Insecta 32 2.9894666 0.92975386 14.235658</span></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 16          Meta Animalia Arthropoda Insecta 41 2.9208988 0.90771986 10.836568</span></span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 17          Meta Animalia Arthropoda Insecta 34 2.8824013 0.89953361  9.953577</span></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 18          Meta Animalia Arthropoda Insecta 23 2.7431849 0.91005291 11.117647</span></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 19          Meta Animalia Arthropoda Insecta 29 2.8735577 0.91852679 12.273973</span></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20          Meta Animalia Arthropoda Insecta 26 2.8644476 0.91440114 11.682399</span></span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21          Meta Animalia Arthropoda Insecta 29 2.8614421 0.91626298 11.942149</span></span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 22          Meta Animalia Arthropoda Insecta 22 2.7231352 0.90634755 10.677778</span></span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 23          Meta Animalia Arthropoda Insecta 24 2.6264652 0.88439688  8.650286</span></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 24          Meta Animalia Arthropoda Insecta 29 2.7966825 0.90751038 10.812024</span></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 25          Meta Animalia Arthropoda Insecta 23 2.4984047 0.88042624  8.363039</span></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 26          Meta Animalia Arthropoda Insecta 29 2.6708233 0.89128837  9.198648</span></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 27          Meta Animalia Arthropoda Insecta 37 2.8380258 0.90012856 10.012872</span></span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 28          Meta Animalia Arthropoda Insecta 24 2.6942649 0.91520000 11.792453</span></span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 29          Meta Animalia Arthropoda Insecta 41 3.1788165 0.93347953 15.032967</span></span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30          Meta Animalia Arthropoda Insecta 46 2.9783477 0.89543679  9.563593</span></span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 31          Meta Animalia Arthropoda Insecta 23 2.7363603 0.92062958 12.599152</span></span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 32          Meta Animalia Arthropoda Insecta 44 2.8179889 0.87304462  7.876783</span></span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 33          Meta Animalia Arthropoda Insecta 34 2.9850803 0.91651056 11.977563</span></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 34          Meta Animalia Arthropoda Insecta 26 2.9013485 0.93008091 14.302245</span></span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 35          Meta Animalia Arthropoda Insecta 20 2.6732659 0.91438763 11.680556</span></span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 36          Meta Animalia Arthropoda Insecta 14 2.4354516 0.89640441  9.652921</span></span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 37          Meta Animalia Arthropoda Insecta 16 2.5922425 0.91358025 11.571429</span></span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38          Meta Animalia Arthropoda Insecta 14 2.4592217 0.89990817  9.990826</span></span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39          Meta Animalia Arthropoda Insecta 28 2.6557610 0.89420647  9.452374</span></span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40          Meta Animalia Arthropoda Insecta  3 0.2287207 0.09399167  1.103743</span></span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 41          Meta Animalia Arthropoda Insecta  2 0.3144922 0.17233560  1.208219</span></span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 42          Meta Animalia Arthropoda Insecta 19 2.6588110 0.91257244 11.438040</span></span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 43          Meta Animalia Arthropoda Insecta 22 2.9475759 0.93990930 16.641509</span></span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 44          Meta Animalia Arthropoda Insecta 59 3.7035920 0.96465093 28.289286</span></span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 45          Meta Animalia Arthropoda Insecta 44 3.6045092 0.96810019 31.348148</span></span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 46          Meta Animalia Arthropoda Insecta 54 3.7640463 0.97139200 34.955257</span></span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 47          Meta Animalia Arthropoda Insecta 57 3.7593478 0.96989166 33.213389</span></span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 48          Meta Animalia Arthropoda Insecta 31 3.2345501 0.95361578 21.559055</span></span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             d         J day_length</span></span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   1.4063321 0.8123122   12.08078</span></span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   2.5400578 0.7262537   12.06269</span></span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   8.2879541 0.8749900   12.27170</span></span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   6.8336946 0.8227227   11.96557</span></span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   7.0876395 0.8257215   11.96886</span></span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   6.9048454 0.8159307   11.97218</span></span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   5.5807132 0.7953934   11.97554</span></span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   7.7844658 0.7548603   11.98260</span></span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   6.6311454 0.7775760   11.98603</span></span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  6.5514433 0.7982604   11.98952</span></span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11  7.4327847 0.7962566   11.99309</span></span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12  7.6006754 0.8138483   12.00404</span></span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13  7.0096209 0.8330154   12.00766</span></span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14  5.6107576 0.8466665   12.01126</span></span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15  6.3994225 0.8625777   12.01485</span></span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 16  7.5076820 0.7865469   12.03781</span></span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 17  6.7274519 0.8173870   12.04176</span></span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 18  5.3099890 0.8748812   12.04572</span></span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 19  5.9340906 0.8533725   12.04970</span></span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20  5.3289589 0.8791782   12.05838</span></span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21  6.3025429 0.8497745   12.06232</span></span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 22  5.0882763 0.8809763   12.06631</span></span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 23  5.1501283 0.8264382   12.07071</span></span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 24  5.9229327 0.8305426   12.07797</span></span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 25  4.7080689 0.7968137   12.08203</span></span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 26  5.7255626 0.7931656   12.08609</span></span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 27  7.0506041 0.7859569   12.09016</span></span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 28  4.4532339 0.8477719   12.14299</span></span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 29  7.3673703 0.8559997   12.03578</span></span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30  8.1266541 0.7779124   11.92493</span></span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 31  4.0858056 0.8727046   11.98731</span></span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 32  7.6215364 0.7446743   12.00658</span></span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 33  6.4630537 0.8465046   12.01598</span></span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 34  5.5421810 0.8905042   12.11436</span></span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 35  4.6792924 0.8923581   12.19693</span></span>
+<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 36  3.2743184 0.9228491   12.32601</span></span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 37  4.1858297 0.9349539   12.35485</span></span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 38  3.7179957 0.9318561   12.28806</span></span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 39  4.7309407 0.7969982   12.32417</span></span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40  0.5385650 0.2081906   12.19631</span></span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 41  0.2675464 0.4537163   12.16923</span></span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 42  3.7218674 0.9029941   12.34179</span></span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 43  4.7395325 0.9535863   12.34184</span></span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 44  9.8724568 0.9082913   12.34298</span></span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 45  9.5095114 0.9525181   12.33762</span></span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 46 10.9769172 0.9436103   11.95340</span></span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 47 11.5791430 0.9298294   11.94793</span></span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 48  6.9701548 0.9419226   11.93942</span></span></code></pre></div>
+<p>A chart can be produced to show date against diversity.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot trend charts </span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_sites_trend_H</span>(<span class="at">clusterised_object =</span> clusterised_Meta, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">main_title =</span> <span class="st">&quot;Formicidae Diversity in the Meta Province&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

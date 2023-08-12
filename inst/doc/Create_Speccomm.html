@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Creating a species composition matrix for further analysis</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Creating a species composition matrix for
+further analysis</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DivInsight)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Colombia&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vegan)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Loading required package: permute</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Loading required package: lattice</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; This is vegan 2.6-4</span></span></code></pre></div>
+<p>A species composition matrix can be created using data from a
+specific location. Species composition matrices are useful for many
+ecological analyses.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use coordinates to clusterise data </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Colombia_coordinate_ref <span class="ot">&lt;-</span> <span class="fu">clusterise_sites</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataframe =</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">subset_by_coordinate_ref</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">dataframe =</span> Colombia,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">coordinate_reference =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">73.487520</span>, <span class="fl">7.539986</span>),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">distance_threshold =</span> <span class="dv">50000</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster_min_length =</span> <span class="dv">30</span> </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p><code>site_regroup()</code> can be used to group sites by a specified
+radius in metres. This method is a lot faster than running
+<code>clusterise_sites()</code> again with new parameters.</p>
+<p>This will group, and therefore separate, sites that are further than
+1km from one another.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># regroup sites with a radius of 1km</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>cref_1km <span class="ot">&lt;-</span> <span class="fu">site_regroup</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">clusterised_object =</span> Colombia_coordinate_ref,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">regroup_radius =</span> <span class="dv">1000</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>Species tables can be produced for each site using
+<code>generate_spec_tables()</code>. The number of individuals and
+species in each table can be specified using the
+<code>min_individuals</code> and <code>min_species</code> arguments.</p>
+<p>Each table will consist of one row pertaining to the site and each
+column will be a species name. Each of these tables will be stored into
+a list.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cref_1km_spectables <span class="ot">&lt;-</span> <span class="fu">generate_spec_tables</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">clusterised_object =</span> cref_1km,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_individuals =</span> <span class="dv">30</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_species =</span> <span class="dv">10</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>The name of each table can be viewed either by using
+<code>names()</code> or the <code>$</code> operator.</p>
+<p>The first number of each table name represents which group the site
+belongs to and the rest of the table name shows the date the individuals
+were observed.</p>
+<p>Users should consider times between species tables, as well as
+seasonal changes, when choosing which tables to create their matrix.</p>
+<p>Below we create a matrix using 18 sites from 18 different groups from
+mid-February to early-April in 2022.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># view the names of each table</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">names</span>(cref_1km_spectables))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;1.2021-03-18&quot;  &quot;3.2021-03-21&quot;  &quot;2.2021-03-22&quot;  &quot;4.2021-03-28&quot; </span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [5] &quot;5.2021-05-30&quot;  &quot;4.2021-06-02&quot;  &quot;6.2021-06-03&quot;  &quot;3.2021-06-06&quot; </span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [9] &quot;3.2021-06-07&quot;  &quot;8.2021-07-02&quot;  &quot;7.2021-07-03&quot;  &quot;8.2021-07-04&quot; </span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [13] &quot;9.2021-07-06&quot;  &quot;10.2021-07-07&quot; &quot;11.2021-07-08&quot; &quot;12.2021-07-09&quot;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [17] &quot;2.2021-07-12&quot;  &quot;13.2021-07-13&quot; &quot;14.2021-07-14&quot; &quot;15.2021-07-15&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [21] &quot;16.2021-07-16&quot; &quot;17.2021-07-17&quot; &quot;18.2021-08-16&quot; &quot;18.2021-08-18&quot;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [25] &quot;19.2021-08-19&quot; &quot;20.2021-08-20&quot; &quot;18.2021-11-01&quot; &quot;18.2021-11-02&quot;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [29] &quot;20.2021-11-04&quot; &quot;20.2021-11-08&quot; &quot;18.2022-01-28&quot; &quot;20.2022-01-29&quot;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [33] &quot;20.2022-01-30&quot; &quot;19.2022-01-31&quot; &quot;7.2022-02-02&quot;  &quot;19.2022-02-13&quot;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [37] &quot;20.2022-02-14&quot; &quot;21.2022-02-15&quot; &quot;19.2022-02-18&quot; &quot;22.2022-02-27&quot;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [41] &quot;19.2022-03-05&quot; &quot;23.2022-03-06&quot; &quot;24.2022-03-07&quot; &quot;7.2022-03-17&quot; </span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [45] &quot;7.2022-03-19&quot;  &quot;8.2022-03-21&quot;  &quot;25.2022-03-23&quot; &quot;26.2022-03-24&quot;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [49] &quot;9.2022-03-25&quot;  &quot;27.2022-03-26&quot; &quot;18.2022-03-28&quot; &quot;28.2022-03-29&quot;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [53] &quot;1.2022-03-30&quot;  &quot;26.2022-03-31&quot; &quot;16.2022-04-01&quot; &quot;29.2022-04-02&quot;</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [57] &quot;17.2022-04-04&quot; &quot;17.2022-04-06&quot;</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co"># store the chosen species tables into a single list </span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>species_table_list <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">17.2022-04-04</span><span class="st">`</span>,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">29.2022-04-02</span><span class="st">`</span>,</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">16.2022-04-01</span><span class="st">`</span>,</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">26.2022-03-31</span><span class="st">`</span>,</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">1.2022-03-30</span><span class="st">`</span>,</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">28.2022-03-29</span><span class="st">`</span>,</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">18.2022-03-28</span><span class="st">`</span>,</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">27.2022-03-26</span><span class="st">`</span>,</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">9.2022-03-25</span><span class="st">`</span>,</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">25.2022-03-23</span><span class="st">`</span>,</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">8.2022-03-21</span><span class="st">`</span>,</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">7.2022-03-19</span><span class="st">`</span>,</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">24.2022-03-07</span><span class="st">`</span>,</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">23.2022-03-06</span><span class="st">`</span>,</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">19.2022-03-05</span><span class="st">`</span>,</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">22.2022-02-27</span><span class="st">`</span>,</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">21.2022-02-15</span><span class="st">`</span>,</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  cref_1km_spectables<span class="sc">$</span><span class="st">`</span><span class="at">20.2022-02-14</span><span class="st">`</span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>)     </span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="co"># generate a species composition matrix</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>SCM1 <span class="ot">&lt;-</span> <span class="fu">generate_speccomm</span>(species_table_list)</span></code></pre></div>
+<p>It is not necessary to change the row names of the matrix but We have
+the option to do so.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># change the row names of the matrix</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>SCM1 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(SCM1)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">row.names</span>(SCM1) <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;17.2022-04-04&quot;</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;29.2022-04-02&quot;</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;16.2022-04-01&quot;</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;26.2022-03-31&quot;</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;1.2022-03-30&quot;</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;28.2022-03-29&quot;</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;18.2022-03-28&quot;</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;27.2022-03-26&quot;</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;9.2022-03-25&quot;</span>,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;25.2022-03-23&quot;</span>,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;8.2022-03-21&quot;</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;7.2022-03-19&quot;</span>,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;24.2022-03-07&quot;</span>,</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;23.2022-03-06&quot;</span>,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;19.2022-03-05&quot;</span>,</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;22.2022-02-27&quot;</span>,</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;21.2022-02-15&quot;</span>,</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;20.2022-02-14&quot;</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>SCM1 <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(SCM1)</span></code></pre></div>
+<p>There are many analyses that can be done with a species composition
+matrix. Here a species accumulation curve using functions from the
+<code>vegan</code> package is demonstrated.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a species accumulation curve </span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>speccurve1 <span class="ot">&lt;-</span> <span class="fu">specaccum</span>(SCM1, <span class="at">method =</span> <span class="st">&quot;random&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the species accumulation curve</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(speccurve1, <span class="at">ci.type=</span><span class="st">&quot;poly&quot;</span>, </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">col=</span><span class="st">&quot;blue&quot;</span>, </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">ci.col=</span><span class="st">&quot;lightblue&quot;</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Species accumulation curve for 18 Sites&quot;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># view the predictions from the species accumulation curve</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(speccurve1)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Species Accumulation Curve</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Accumulation method: random, with 100 permutations</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call: specaccum(comm = SCM1, method = &quot;random&quot;) </span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                                            </span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sites     1.00000  2.00000  3.00000   4.00000   5.00000   6.00000   7.00000</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Richness 48.71000 76.09000 95.66000 109.83000 120.61000 128.65000 136.91000</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sd       20.62474 18.98596 15.99509  14.21839  11.37772  10.90119   8.36309</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                                               </span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sites      8.00000   9.00000  10.00000  11.00000  12.00000  13.00000  14.00000</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Richness 143.54000 149.49000 154.42000 159.00000 163.61000 167.61000 171.30000</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sd         7.61368   6.94349   6.45291   5.00505   4.20412   3.90776   3.44803</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                           </span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sites     15.00000  16.00000  17.00000  18</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Richness 174.51000 177.49000 180.07000 183</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sd         3.26133   2.75423   2.08533   0</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

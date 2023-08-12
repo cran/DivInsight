@@ -1,0 +1,123 @@
+---
+title: "Auto-grouping and charting"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{How to group sites}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(DivInsight)
+library(dplyr)
+data("Colombia")
+```
+
+To gain a more detailed insight of the diversity in a large area the `group_radius` argument can be used in the `clusterise_sites()` function to automatically group sites together by specifying a radius in metres.
+
+A label is assigned to each site denoting which group it belongs to. This label can be seen in the `site_group` column in the cluster dataframe.
+
+```{r}
+# subset the dataframe by province name 
+Colombia_Meta <- subset(Colombia, stateProvince == "Meta")
+
+# cluster occurrence data by date and generate centred coordinates for each site
+clusterised_Meta_20km_groups <- clusterise_sites(
+  dataframe = Colombia_Meta,
+  cluster_min_length = 30,
+  
+  group_radius = 20000
+)
+
+# view the information for each site/cluster
+print(clusterised_Meta_20km_groups[[2]])
+```
+
+Base R commands can be used to see how many sites there are in each group and help us decide which group(s) to examine further.
+
+```{r}
+# use table() and sort() to see how many sites there are in each group
+clusterised_Meta_20km_groups[[2]]$site_group %>% table %>% sort %>% print
+```
+
+Here we choose to examine sites 1, 5, 6, and 8 further by using `filter_groups_by_number()` to store each group's data then plot using `plot_sites_scatter_H()`.
+
+```{r, fig.show='hold', fig.width=4, fig.height=3}
+# store the data for each group
+Colombia_Meta_1 <- filter_groups_by_number(clusterised_Meta_20km_groups, 1)
+Colombia_Meta_5 <- filter_groups_by_number(clusterised_Meta_20km_groups, 5)
+Colombia_Meta_6 <- filter_groups_by_number(clusterised_Meta_20km_groups, 6)
+Colombia_Meta_8 <- filter_groups_by_number(clusterised_Meta_20km_groups, 8)
+
+# plot the data in a scatter plot
+plot_sites_scatter_H(Colombia_Meta_1, main = "Shannons H at Meta #1") 
+plot_sites_scatter_H(Colombia_Meta_5, main = "Shannons H at Meta #5") 
+plot_sites_scatter_H(Colombia_Meta_6, main = "Shannons H at Meta #6") 
+plot_sites_scatter_H(Colombia_Meta_8, main = "Shannons H at Meta #8") 
+```
+
+The charts show varying patterns of diversity over available time frames but it is important to know where these changes are taking place.
+
+`map_start()` can be used to create a new map object and `map_add()` can be used to add coordinate information. 
+
+```{r}
+# create a new map using group 1's coordinates
+Colombia_Meta_map <- 
+  
+  map_start(
+    
+    clusterised_object = Colombia_Meta_1,
+    site_name = "Meta #1",
+    colour = "green"
+  )
+
+# add group 5's coordinates to the map object 
+Colombia_Meta_map <-
+  
+  map_add(
+    
+    existing_map = Colombia_Meta_map,
+    
+    clusterised_object = Colombia_Meta_5,
+    site_name = "Meta #5",
+    colour = "purple"
+  )
+
+# add group 6's coordinates to the map object
+Colombia_Meta_map <-
+  
+  map_add(
+    
+    existing_map = Colombia_Meta_map,
+    
+    clusterised_object = Colombia_Meta_6,
+    site_name = "Meta #6",
+    colour = "blue"
+  )
+
+# add group 8's coordinates to the map object
+Colombia_Meta_map <-
+  
+  map_add(
+    
+    existing_map = Colombia_Meta_map,
+    
+    clusterised_object = Colombia_Meta_8,
+    site_name = "Meta #8",
+    colour = "red"
+  )
+```
+
+Once the map has been created it can be viewed.
+
+```{r, fig.show='hold', fig.width=8, fig.height=6}
+# view the map
+Colombia_Meta_map
+```

@@ -1,0 +1,67 @@
+---
+title: "Introduction to DivInsight"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to DivInsight}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(DivInsight)
+data("Colombia")
+```
+
+This is an introduction to the 'DivInsight' package.
+
+We use 'DivInsight' to repurpose historical occurrence taxon data for further analysis.
+
+Included in the package is the Colombia dataset, which contains occurrence data for the taxon 'Formicidae' at the Family level from 2000 to 2023. This data was queried from the Global Biodiversity Information Facility (GBIF) database using the `rgbif` package.
+
+Each row of the occurrence dataframe has data for one observed individual. The dataset has many variables but the most important ones for the functions in this package pertain to taxa names, coordinate location, and dates of the observations. 
+
+```{r}
+head(Colombia[c(2:4, 31:32, 45)], 10)
+```
+
+We can subset the Colombia dataset then perform the most important function in the package `clusterise_sites()` to cluster data by date and produce centered coordinates for each cluster. 
+
+These clusters of data can be considered sites. 
+
+```{r}
+# subset the dataframe by province name 
+Colombia_Meta <- subset(Colombia, stateProvince == "Meta")
+
+# cluster occurrence data by date and generate centred coordinates for each site
+clusterised_Meta <- clusterise_sites(
+  
+  dataframe = Colombia_Meta,
+  cluster_min_length = 30
+  
+)
+```
+
+Once the data has been 'clusterised' a dataframe, where each row pertains to a site, can be produced by using `generate_stats()`. This information includes date of observations, centred coordinates, and diversity indices. These indices include Species Richness (S), Shannon Diversity (H), Simpson Diversity (D), Inverse Simpson (Dinv), Margalef's Diversity (d), and Pielou's Evenness (J).
+
+```{r, view-results}
+# generate stats 
+stats_Meta <- generate_stats(clusterised_Meta)
+
+# view the stats table
+print(stats_Meta)
+```
+
+A chart can be produced to show date against diversity. 
+
+```{r, fig.show='hold', fig.width=8, fig.height=6}
+# plot trend charts 
+plot_sites_trend_H(clusterised_object = clusterised_Meta, 
+                   main_title = "Formicidae Diversity in the Meta Province")
+```
